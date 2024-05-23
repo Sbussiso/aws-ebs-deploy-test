@@ -1,4 +1,5 @@
 import os
+import random
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
@@ -9,10 +10,9 @@ load_dotenv()
 application = Flask(__name__)
 
 # Database configuration
-application.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@"
-    f"{os.environ['DB_HOST']}/{os.environ['DB_NAME']}"
-)
+database_url = os.getenv('DATABASE_URL')
+print(f"Database URL: {database_url}")  # Add this line to debug
+application.config['SQLALCHEMY_DATABASE_URI'] = database_url
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the database
@@ -27,6 +27,10 @@ class Transaction(db.Model):
     command = db.Column(db.String(255), nullable=False)
     refnum = db.Column(db.String(255), nullable=False)
 
+# Create the database tables
+with application.app_context():
+    db.create_all()
+
 @application.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
@@ -34,7 +38,8 @@ def home():
         amount = request.form.get("amount")
         date = request.form.get("date")
         command = request.form.get("command")
-        refnum = request.form.get("card")
+        # Generate a random reference number
+        refnum = ''.join(random.choices('0123456789', k=10))  # Generates a 10-digit random number string
 
         # Create a new transaction record
         transaction = Transaction(
