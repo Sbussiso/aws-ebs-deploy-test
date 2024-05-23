@@ -2,7 +2,6 @@ import os
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-import psycopg2
 
 # Load environment variables from .env file
 load_dotenv()
