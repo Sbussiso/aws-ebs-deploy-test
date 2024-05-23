@@ -1,12 +1,10 @@
-import os
-import random
-from flask import Flask, render_template, request
+import os, random
+from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
-# Load environment variables from .env file for local development
-if os.getenv('FLASK_ENV') == 'development':
-    load_dotenv()
+# Load environment variables from .env file
+load_dotenv()
 
 application = Flask(__name__)
 
@@ -14,7 +12,7 @@ application = Flask(__name__)
 database_url = os.getenv('DATABASE_URL')
 if not database_url:
     raise ValueError("No DATABASE_URL set for Flask application")
-print(f"Database URL: {database_url}")  # Add this line to debug
+
 application.config['SQLALCHEMY_DATABASE_URI'] = database_url
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
